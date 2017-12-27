@@ -1,37 +1,57 @@
 
-returned_data = {'captures': {'2015': {'application/x-shockwave-flash': 1, 'text/html': 7, 'image/jpeg': 3}, '2014': {'application/x-shockwave-flash': 2, 'text/html': 5}, '2016': {'application/x-shockwave-flash': 3, 'text/html': 16, 'image/jpeg': 4}, '2013': {'application/x-shockwave-flash': 1, 'text/html': 5, 'image/jpeg': 4}}, 'urls_total_compressed_size': {'2015': {'application/x-shockwave-flash': 259829, 'text/html': 10301, 'image/jpeg': 201361}, '2014': {'application/x-shockwave-flash': 259831, 'text/html': 10304}, '2016': {'application/x-shockwave-flash': 259831, 'text/html': 13918, 'image/jpeg': 270477}, '2013': {'application/x-shockwave-flash': 259831, 'text/html': 10136, 'image/jpeg': 270473}}, 'type': 'host', 'urls': {'2015': {'application/x-shockwave-flash': 1, 'text/html': 4, 'image/jpeg': 3}, '2014': {'application/x-shockwave-flash': 1, 'text/html': 4}, '2016': {'application/x-shockwave-flash': 1, 'text/html': 4, 'image/jpeg': 4}, '2013': {'application/x-shockwave-flash': 1, 'text/html': 4, 'image/jpeg': 4}}, 'new_urls': {'2013': {'application/x-shockwave-flash': 1, 'text/html': 4, 'image/jpeg': 4}}}
-
-
-
-def get_data(keys, html_key, image_key, category_key):
-    htmls = 0
-    imgs = 0
-    sitename = 'site'
-    for key in keys:
-        if html_key in returned_data[category_key][key]:
-            htmls += returned_data[category_key][key][html_key]
-        if image_key in returned_data[category_key][key]:
-            imgs += returned_data[category_key][key][image_key]
-    return_dict = {
-        'site': sitename,
-        'category_key': category_key,
-        'htmls': htmls,
-        'imgs': imgs
-    }
-    print(return_dict)
-    print("category_key:{}, htmls:{}".format(category_key, htmls))
-    print("category_key:{}, imgs:{}".format(category_key, imgs))
+returned_data = {'10topcasino.ru': {'captures': {'htm': 1, 'img': 1}, 'urls': {'htm': 1, 'img': 1}, 'new_urls': {'htm': 0, 'img': 1}}, '174-elki.ru': {'captures': {'htm': 1, 'img': 0}, 'urls': {'htm': 1, 'img': 0}, 'new_urls': {'htm': 1, 'img': 0}}, '188800.ru': {'captures': {'htm': 17609, 'img': 1338}, 'urls': {'htm': 6467, 'img': 619}, 'new_urls': {'htm': 4540, 'img': 270}}, '1avtolombard.ru': {'captures': {'htm': 33, 'img': 11}, 'urls': {'htm': 16, 'img': 11}, 'new_urls': {'htm': 4, 'img': 4}}}
 
 def iterate_data(returned_data):
+    domains = list(returned_data.keys())
     category_keys = ['captures', 'urls', 'new_urls']
-    html_key = 'text/html'
-    image_key = 'image/jpeg'
-    for category_key in category_keys:
-        keys = returned_data[category_key].keys()
-        get_data(keys, html_key, image_key, category_key)
+    result_dict = {}
+    for domain in domains:
+        result_dct = {}
+        domain_data = returned_data[domain]
+        for category_key in category_keys:
+            keys = list(domain_data.keys())
+            result_dct[category_key] = get_data(domain_data, keys)
+        result_dict[domain] = result_dct
+    return result_dict
 
 
+def get_data(domain_data, keys):
+    htmls = 0
+    imgs = 0
+    for key in keys:
+        if 'text/html' in domain_data[key]:
+            htmls += domain_data[key]['text/html']
+        if 'image/jpeg' in domain_data[key]:
+            imgs += domain_data[key]['image/jpeg']
+    return_dict = {
+        'htm': htmls,
+        'img': imgs
+    }
+    return return_dict
 
 
+def convert_dict(result_dict):
+    keys = list(result_dict.keys())
+    multiple_query = ''
+    for key in keys:
+        site = key
+        captures_html = result_dict[key]['captures']['htm']
+        captures_img = result_dict[key]['captures']['img']
+        urls_html = result_dict[key]['urls']['htm']
+        urls_img = result_dict[key]['urls']['img']
+        new_urls_html = result_dict[key]['new_urls']['htm']
+        new_urls_img = result_dict[key]['new_urls']['img']
+        multiple_query += "('{}',{},{},{},{},{},{}),".format(site, captures_html, captures_img, urls_html, urls_img,
+                                                          new_urls_html, new_urls_img)
+    query_string = "INSERT INTO `result`(`site`, `captures_htm`, `captures_img`, `urls_htm`, `urls_img`, `new_urls_htm`" \
+                   ", `new_urls_img`) VALUES {}".format(multiple_query)
+    query_string = query_string[:-1]
+    return query_string
 
-iterate_data(returned_data)
+
+result_dict = iterate_data(returned_data)
+
+#big_query = convert_dict(result_dict)
+
+print(result_dict)
+
