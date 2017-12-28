@@ -13,8 +13,11 @@ def data_from_wa(read_from_db):
 
         if returned_data != {}:
             list_from_wa[sitename] = returned_data
+            print("in webarchive {}".format(sitename))
+            time.sleep(2)
         else:
             #change later to random 1-5
+            print("not webarchive {}".format(sitename))
             time.sleep(2)
     return list_from_wa
 
@@ -27,20 +30,26 @@ def iterate_data(returned_data):
         result_dct = {}
         domain_data = returned_data[domain]
         for category_key in category_keys:
-            keys = list(domain_data.keys())
-            result_dct[category_key] = get_data(domain_data, keys)
+            #keys = list(domain_data.keys())
+            result_dct[category_key] = get_data(domain_data, category_key)
         result_dict[domain] = result_dct
     return result_dict
 
 
-def get_data(domain_data, keys):
+def get_data(domain_data, category_key):
     htmls = 0
     imgs = 0
-    for key in keys:
-        if 'text/html' in domain_data[key]:
-            htmls += domain_data[key]['text/html']
-        if 'image/jpeg' in domain_data[key]:
-            imgs += domain_data[key]['image/jpeg']
+    snap_years = list(domain_data[category_key].keys())
+    #print("domain_data[category_key] {} [category_key] {} snap year {}".format(domain_data[category_key], category_key, snap_years))
+    #if 'text/html' in domain_data[category_key]['2013']:
+    #    print(domain_data[category_key]['2013']['text/html'])
+    for snap_year in snap_years:
+        if 'text/html' in domain_data[category_key][snap_year]:
+            htmls += domain_data[category_key][snap_year]['text/html']
+            #print("category_key = {}, snap_year = {}, htmls = {}".format(category_key,snap_year,htmls))
+        if 'image/jpeg' in domain_data[category_key][snap_year]:
+            imgs += domain_data[category_key][snap_year]['image/jpeg']
+            #print("category_key = {}, snap_year = {}, imgs = {}".format(category_key, snap_year, imgs))
     return_dict = {
         'htm': htmls,
         'img': imgs

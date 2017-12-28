@@ -8,11 +8,7 @@ print(list_from_wa)
 result_list = iterate_data(list_from_wa)
 print('result_list')
 print(result_list)
-list_for_iterate = iterate_data(result_list)
-print('list_for_iterate')
-print(list_for_iterate)
-big_query = convert_dict(list_for_iterate)
+big_query = convert_dict(result_list)
 print(big_query)
-#111
-
+write_to_db(big_query)
 
