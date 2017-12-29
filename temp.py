@@ -1,10 +1,10 @@
+import random
+#returned_data = {'10topcasino.ru': {'captures': {'htm': 1, 'img': 1}, 'urls': {'htm': 1, 'img': 1}, 'new_urls': {'htm': 0, 'img': 1}}, '174-elki.ru': {'captures': {'htm': 1, 'img': 0}, 'urls': {'htm': 1, 'img': 0}, 'new_urls': {'htm': 1, 'img': 0}}, '188800.ru': {'captures': {'htm': 17609, 'img': 1338}, 'urls': {'htm': 6467, 'img': 619}, 'new_urls': {'htm': 4540, 'img': 270}}, '1avtolombard.ru': {'captures': {'htm': 33, 'img': 11}, 'urls': {'htm': 16, 'img': 11}, 'new_urls': {'htm': 4, 'img': 4}}}
 
-returned_data = {'10topcasino.ru': {'captures': {'htm': 1, 'img': 1}, 'urls': {'htm': 1, 'img': 1}, 'new_urls': {'htm': 0, 'img': 1}}, '174-elki.ru': {'captures': {'htm': 1, 'img': 0}, 'urls': {'htm': 1, 'img': 0}, 'new_urls': {'htm': 1, 'img': 0}}, '188800.ru': {'captures': {'htm': 17609, 'img': 1338}, 'urls': {'htm': 6467, 'img': 619}, 'new_urls': {'htm': 4540, 'img': 270}}, '1avtolombard.ru': {'captures': {'htm': 33, 'img': 11}, 'urls': {'htm': 16, 'img': 11}, 'new_urls': {'htm': 4, 'img': 4}}}
-
-#returned_data = {'10topcasino.ru': {'captures': {'2013': {'image/gif': 1, 'image/png': 2, 'text/html': 1, 'image/jpeg': 1, 'text/css': 1}},
-#                                    'urls_total_compressed_size': {'2013': {'image/gif': 1118, 'image/png': 33707, 'text/html': 2385, 'image/jpeg': 2834, 'text/css': 16743}},
-#                                    'type': 'host',  'urls': {'2013': {'image/gif': 1, 'image/png': 2, 'text/html': 1, 'image/jpeg': 1, 'text/css': 1}},
-#                                    'new_urls': {'2013': {'image/gif': 1, 'image/png': 2, 'text/css': 1, 'image/jpeg': 1}}}}
+returned_data = {'10topcasino.ru': {'captures': {'2013': {'image/gif': 1, 'image/png': 2, 'text/html': 1, 'image/jpeg': 1, 'text/css': 1}},
+                                    'urls_total_compressed_size': {'2013': {'image/gif': 1118, 'image/png': 33707, 'text/html': 2385, 'image/jpeg': 2834, 'text/css': 16743}},
+                                    'type': 'host',  'urls': {'2013': {'image/gif': 1, 'image/png': 2, 'text/html': 1, 'image/jpeg': 1, 'text/css': 1}},
+                                    'new_urls': {'2013': {'image/gif': 1, 'image/png': 2, 'text/css': 1, 'image/jpeg': 1}}}}
 
 
 def iterate_data(returned_data):
@@ -67,3 +67,5 @@ big_query = convert_dict(result_dict)
 
 print(big_query)
 
+random_sleep = random.randint(1,10)
+print(random_sleep)
