@@ -1,9 +1,11 @@
 from settings import headers,proxyDict
 import requests
 import time
+import random
 from mysql import write_to_db,read_from_db
 
 def data_from_wa(read_from_db):
+    random_sleep = random.randint(1,10)
     list_from_wa = {}
     for url in read_from_db:
         sitename = url
@@ -13,51 +15,57 @@ def data_from_wa(read_from_db):
 
         if returned_data != {}:
             list_from_wa[sitename] = returned_data
+            print("in webarchive {}".format(sitename))
+            time.sleep(random_sleep)
         else:
-            time.sleep(1)
-            print("useless:{}".format(url))
+            print("not webarchive {}".format(sitename))
+            time.sleep(random_sleep)
     return list_from_wa
 
 
 def iterate_data(returned_data):
+    domains = list(returned_data.keys())
     category_keys = ['captures', 'urls', 'new_urls']
-    html_key = 'text/html'
-    image_key = 'image/jpeg'
-    result_list = []
-    for category_key in category_keys:
-        keys = returned_data[category_key].keys()
-        result_list.append(get_data(keys, html_key, image_key, category_key))
-    return result_list
+    result_dict = {}
+    for domain in domains:
+        result_dct = {}
+        domain_data = returned_data[domain]
+        for category_key in category_keys:
+            result_dct[category_key] = get_data(domain_data, category_key)
+        result_dict[domain] = result_dct
+    return result_dict
 
 
-def get_data(returned_data, keys, html_key, image_key, category_key):
+def get_data(domain_data, category_key):
     htmls = 0
     imgs = 0
-    sitename = returned_data['sitename']
-    for key in keys:
-        if html_key in returned_data[category_key][key]:
-            htmls += returned_data[category_key][key][html_key]
-        if image_key in returned_data[category_key][key]:
-            imgs += returned_data[category_key][key][image_key]
+    snap_years = list(domain_data[category_key].keys())
+    for snap_year in snap_years:
+        if 'text/html' in domain_data[category_key][snap_year]:
+            htmls += domain_data[category_key][snap_year]['text/html']
+        if 'image/jpeg' in domain_data[category_key][snap_year]:
+            imgs += domain_data[category_key][snap_year]['image/jpeg']
     return_dict = {
-        'site': sitename,
-        'category_key': category_key,
         'htm': htmls,
         'img': imgs
     }
     return return_dict
 
-def convert_dict(result_list):
-    site = result_list[0]['site']
-    captures_html = result_list[0]['htmls']
-    captures_img = result_list[0]['imgs']
-    urls_html = result_list[1]['htmls']
-    urls_img = result_list[1]['imgs']
-    new_urls_html = result_list[2]['htmls']
-    new_urls_img = result_list[2]['imgs']
 
-    query_string = "INSERT INTO `result`(`sitename`, `captures_htm`, `captures_img`, `urls_htm`, `urls_img`," \
-                   " `new_urls_htm`, `new_urls_img`) VALUES ('{}',{},{},{}," \
-                   "{},{},{})".format(site, captures_html, captures_img, urls_html, urls_img, new_urls_html, new_urls_img)
-
+def convert_dict(result_dict):
+    keys = list(result_dict.keys())
+    multiple_query = ''
+    for key in keys:
+        site = key
+        captures_html = result_dict[key]['captures']['htm']
+        captures_img = result_dict[key]['captures']['img']
+        urls_html = result_dict[key]['urls']['htm']
+        urls_img = result_dict[key]['urls']['img']
+        new_urls_html = result_dict[key]['new_urls']['htm']
+        new_urls_img = result_dict[key]['new_urls']['img']
+        multiple_query += "('{}',{},{},{},{},{},{}),".format(site, captures_html, captures_img, urls_html, urls_img,
+                                                          new_urls_html, new_urls_img)
+    query_string = "INSERT INTO `result`(`site`, `captures_htm`, `captures_img`, `urls_htm`, `urls_img`, `new_urls_htm`" \
+                   ", `new_urls_img`) VALUES {}".format(multiple_query)
+    query_string = query_string[:-1]
     return query_string

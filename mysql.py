@@ -1,11 +1,10 @@
 import MySQLdb
 
-
-def read_from_db():
+def read_from_db(quant):
     sites = []
-    db = MySQLdb.connect("138.68.163.33", "admin_webarch", "fZFUCSpcsx", "admin_webarch")
+    db = MySQLdb.connect("localhost", "root", "", "webarch")
     cursor = db.cursor()
-    sql = "SELECT sitename FROM `source` WHERE inuse='0' LIMIT 10"
+    sql = "SELECT sitename FROM `source` WHERE inuse='0' LIMIT {}".format(quant)
     try:
         cursor.execute(sql)
         results = cursor.fetchall()
@@ -17,9 +16,20 @@ def read_from_db():
     return sites
 
 def write_to_db(query_string):
-    db = MySQLdb.connect("138.68.163.33", "admin_webarch", "fZFUCSpcsx", "admin_webarch")
+    db = MySQLdb.connect("localhost","root","","webarch")
     cursor = db.cursor()
     sql = query_string
+    try:
+        cursor.execute(sql)
+        db.commit()
+    except:
+        db.rollback()
+    db.close()
+
+def update_db(sitename):
+    db = MySQLdb.connect("localhost","root","","webarch")
+    cursor = db.cursor()
+    sql = "UPDATE `source` SET `inuse`='1' WHERE `sitename`='{}'".format(sitename)
     try:
         cursor.execute(sql)
         db.commit()
@@ -36,33 +46,8 @@ def write_to_db(query_string):
 #query_string = convert_dict(result_list)
 #mysql_write(query_string)
 #print(read_from_db())
+#some_list = read_from_db()
+#print(some_list[0])
+#update_db(some_list[0])
 
-def write_to_db_test(query_string):
-    db = MySQLdb.connect("45.63.13.67", "admin_webarch", "fZFUCSpcsx", "admin_webarch")
-    cursor = db.cursor()
-    sql = query_string
-    try:
-        cursor.execute(sql)
-        db.commit()
-    except:
-        db.rollback()
-    db.close()
 
-write_to_db_test("INSERT INTO `result`(`sitename`, `captures_htm`, `captures_img`, `urls_htm`, `urls_img`," \
-                   " `new_urls_htm`, `new_urls_img`) VALUES ('test',1,2,3," \
-                   "4,5,6)")
-def read_from_db_test():
-    sites = []
-    db = MySQLdb.connect("45.63.13.67", "admin_webarch", "fZFUCSpcsx", "admin_webarch")
-    cursor = db.cursor()
-    sql = "SELECT * FROM `result` WHERE inuse='0' LIMIT 10"
-    try:
-        cursor.execute(sql)
-        results = cursor.fetchall()
-        for row in results:
-            sites.append(row[0])
-    except:
-        print("Error: unable to fetch data")
-    db.close()
-    return sites
-print(read_from_db_test())
