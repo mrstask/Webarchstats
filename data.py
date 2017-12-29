@@ -56,7 +56,7 @@ def convert_dict(result_list):
     new_urls_html = result_list[2]['htmls']
     new_urls_img = result_list[2]['imgs']
 
-    query_string = "INSERT INTO `result`(`site`, `captures_htm`, `captures_img`, `urls_htm`, `urls_img`," \
+    query_string = "INSERT INTO `result`(`sitename`, `captures_htm`, `captures_img`, `urls_htm`, `urls_img`," \
                    " `new_urls_htm`, `new_urls_img`) VALUES ('{}',{},{},{}," \
                    "{},{},{})".format(site, captures_html, captures_img, urls_html, urls_img, new_urls_html, new_urls_img)
 
