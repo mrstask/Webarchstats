@@ -15,7 +15,11 @@ def data_from_wa(some):
     for ids, url in some.items():
         sitename = url
         url = 'https://web.archive.org/__wb/search/metadata?q=' + url
-        r = requests.get(url, headers=headers, proxies=proxyDict)
+        try:
+            r = requests.get(url, headers=headers)
+        except:
+            print('Cant recieve data')
+        #, proxies=proxyDict)
         returned_data = r.json()
         if returned_data != {}:
             list_from_wa[sitename] = returned_data
