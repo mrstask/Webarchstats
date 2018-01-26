@@ -3,6 +3,7 @@ from data import data_from_wa, iterate_data, convert_dict
 import random
 import time
 
+
 if quantity() > 100:
     for _ in range(10):
         if quantity() > 100:
