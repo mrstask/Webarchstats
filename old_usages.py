@@ -59,12 +59,6 @@
 #some_list = read_from_db()
 #print(some_list[0])
 #update_db(some_list[0])
-#138.68.163.33	admin_webarch	fZFUCSpcsx
-#194.58.122.231	admin_regru	uvT9TO6Aw7
-#DBNAME = "admin_regru"
-#DBIP = "194.58.122.231"
-#DBUSER = "admin_regru"
-#DBPASS = "uvT9TO6Aw7"
 
 #def read_from_db_old(quant):
 #    db = MySQLdb.connect(db_connection_data)

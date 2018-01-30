@@ -10,6 +10,6 @@ headers = {
 }
 
 DBNAME = "admin_regru"
-DBIP = "194.58.122.231"
+DBIP = "194.58"
 DBUSER = "admin_regru"
-DBPASS = "uvT9TO6Aw7"
+DBPASS = ""
